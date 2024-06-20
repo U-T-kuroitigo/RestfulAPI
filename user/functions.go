@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TheGolurk/RestfulAPI/configuration"
-	"github.com/TheGolurk/RestfulAPI/response"
+	"github.com/U-T-kuroitigo/RestfulAPI/configuration"
+	"github.com/U-T-kuroitigo/RestfulAPI/response"
 	"github.com/labstack/echo"
 )
 

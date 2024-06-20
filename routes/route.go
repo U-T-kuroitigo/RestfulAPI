@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/TheGolurk/RestfulAPI/user"
+	"github.com/U-T-kuroitigo/RestfulAPI/user"
 	"github.com/labstack/echo"
 )
 

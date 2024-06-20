@@ -1,5 +1,6 @@
-go mod init example.com/m
+以下コンソールで実行
+go mod init github.com/U-T-kuroitigo/RestfulAPI
 go get -u github.com/labstack/echo/...
 go get -u github.com/jinzhu/gorm
 go get -u github.com/go-sql-driver/mysql
-go get github.com/TheGolurk/RestfulAPI/routes
+go get github.com/U-T-kuroitigo/RestfulAPI/routes

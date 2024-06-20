@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/TheGolurk/RestfulAPI/routes"
+	"github.com/U-T-kuroitigo/RestfulAPI/routes"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
