@@ -4,3 +4,14 @@ go get -u github.com/labstack/echo/...
 go get -u github.com/jinzhu/gorm
 go get -u github.com/go-sql-driver/mysql
 go get github.com/U-T-kuroitigo/RestfulAPI/routes
+go get github.com/joho/godotenv
+go mod tidy
+
+
+.envファイルを作成
+ファイル内に以下を記載
+Server = "host名"
+Port = "使用ポート"
+User = "使用ユーザー"
+Password = "パスワード"
+Database = "使用データベース"
