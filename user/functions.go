@@ -1,8 +1,6 @@
 package user
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -14,33 +12,25 @@ import (
 // Create crea un nuevo usuario
 func Create(c echo.Context) error {
 	u := &User{}
-	err := c.Bind(u)
-	if err != nil {
+	if err := c.Bind(u); err != nil {
 		r := response.Model{
 			Code:    "400",
 			Message: "Estructura incorrecta",
-			Data:    err,
+			Data:    err.Error(), // errをそのまま返すのではなく、メッセージに変換する
 		}
-
-		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-		c.Response().WriteHeader(http.StatusBadRequest)
-		return json.NewEncoder(c.Response()).Encode(r)
+		return c.JSON(http.StatusBadRequest, r)
 	}
 
 	db := configuration.GetConnection()
-	defer db.Close()
 
-	err = db.Create(&u).Error
-	if err != nil {
+
+	if err := db.Create(&u).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
 			Message: "Error al crear",
-			Data:    err,
+			Data:    err.Error(),
 		}
-
-		c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-		c.Response().WriteHeader(http.StatusInternalServerError)
-		return json.NewEncoder(c.Response()).Encode(r)
+		return c.JSON(http.StatusInternalServerError, r)
 	}
 
 	r := response.Model{
@@ -48,91 +38,106 @@ func Create(c echo.Context) error {
 		Message: "Creado Correctamente",
 		Data:    u,
 	}
-
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	c.Response().WriteHeader(http.StatusCreated)
-	return json.NewEncoder(c.Response()).Encode(r)
+	return c.JSON(http.StatusCreated, r)
 }
 
 // GetAll Obtiene todos los datos
 func GetAll(c echo.Context) error {
 	users := []User{}
 	db := configuration.GetConnection()
-	defer db.Close()
 
-	us := db.Find(&users)
+
+	if err := db.Find(&users).Error; err != nil {
+		r := response.Model{
+			Code:    "500",
+			Message: "Error al consultar",
+			Data:    err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, r)
+	}
 
 	r := response.Model{
 		Code:    "200",
 		Message: "Consultado Correctamente",
-		Data:    us,
+		Data:    users,
 	}
-
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	c.Response().WriteHeader(http.StatusOK)
-	return json.NewEncoder(c.Response()).Encode(r)
-
+	return c.JSON(http.StatusOK, r)
 }
 
 // Delete elimina un usuario por su id
 func Delete(c echo.Context) error {
-
 	var usuario User
 	id := c.QueryParam("id")
 
 	db := configuration.GetConnection()
-	defer db.Close()
 
-	db.First(&usuario, id)
-	db.Delete(&usuario)
 
-	users := []User{}
-	db.Find(&users)
+	if err := db.First(&usuario, id).Error; err != nil {
+		r := response.Model{
+			Code:    "404",
+			Message: "Usuario no encontrado",
+			Data:    err.Error(),
+		}
+		return c.JSON(http.StatusNotFound, r)
+	}
+
+	if err := db.Delete(&usuario).Error; err != nil {
+		r := response.Model{
+			Code:    "500",
+			Message: "Error al eliminar",
+			Data:    err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, r)
+	}
 
 	r := response.Model{
 		Code:    "202",
 		Message: "Eliminado Correctamente",
-		Data:    &users,
+		Data:    usuario,
 	}
-
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	c.Response().WriteHeader(http.StatusAccepted)
-	return json.NewEncoder(c.Response()).Encode(r)
+	return c.JSON(http.StatusAccepted, r)
 }
 
 // Update actualiza los campos
 func Update(c echo.Context) error {
-	// var usuario User
-
 	i := c.QueryParam("id")
 	fn := c.QueryParam("firstname")
 	ltn := c.QueryParam("lastname")
 	ag, err := strconv.Atoi(c.QueryParam("age"))
 	if err != nil {
-		log.Fatal("Error al convertir el parametro ", err)
-		return err
+		return c.JSON(http.StatusBadRequest, response.Model{
+			Code:    "400",
+			Message: "Parámetro inválido",
+			Data:    err.Error(),
+		})
 	}
 
 	db := configuration.GetConnection()
-	defer db.Close()
 
-	// db.Find(&usuario, i)
 
-	db.Model(&User{}).Where("ID = ? ", i).Updates(User{FirstName: fn, LastName: ltn, Age: ag})
+	if err := db.Model(&User{}).Where("ID = ?", i).Updates(User{FirstName: fn, LastName: ltn, Age: ag}).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, response.Model{
+			Code:    "500",
+			Message: "Error al actualizar",
+			Data:    err.Error(),
+		})
+	}
 
 	users := []User{}
-	db.Find(&users)
+	if err := db.Find(&users).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, response.Model{
+			Code:    "500",
+			Message: "Error al consultar",
+			Data:    err.Error(),
+		})
+	}
 
 	r := response.Model{
 		Code:    "202",
 		Message: "Actualizado Correctamente",
-		Data:    &users,
+		Data:    users,
 	}
-
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	c.Response().WriteHeader(http.StatusAccepted)
-	return json.NewEncoder(c.Response()).Encode(r)
-
+	return c.JSON(http.StatusAccepted, r)
 }
 
 // Get trae un solo usuario por su ID
@@ -140,18 +145,21 @@ func Get(c echo.Context) error {
 	id := c.QueryParam("id")
 
 	db := configuration.GetConnection()
-	defer db.Close()
 
-	consulta := db.First(&User{}, id)
+	var user User
+	if err := db.First(&user, id).Error; err != nil {
+		r := response.Model{
+			Code:    "404",
+			Message: "Usuario no encontrado",
+			Data:    err.Error(),
+		}
+		return c.JSON(http.StatusNotFound, r)
+	}
 
 	r := response.Model{
 		Code:    "200",
 		Message: "Consultado correctamente",
-		Data:    consulta,
+		Data:    user,
 	}
-
-	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-	c.Response().WriteHeader(http.StatusAccepted)
-	return json.NewEncoder(c.Response()).Encode(r)
-
+	return c.JSON(http.StatusOK, r)
 }

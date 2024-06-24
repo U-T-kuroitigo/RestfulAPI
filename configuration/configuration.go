@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql" //driver para mysql
-	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	_ "gorm.io/driver/mysql" //driver para mysql
+	"gorm.io/gorm"
 )
 
 // Configuration crea un struct para el json
@@ -42,7 +43,7 @@ func GetConfiguration() Configuration {
 func GetConnection() *gorm.DB {
 	c := GetConfiguration()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", c.User, c.Password, c.Server, c.Port, c.Database)
-	db, err := gorm.Open("mysql", dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
