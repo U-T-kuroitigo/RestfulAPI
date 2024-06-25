@@ -3,8 +3,9 @@ go mod init github.com/U-T-kuroitigo/RestfulAPI
 go get -u github.com/labstack/echo/...
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/mysql
-go get github.com/U-T-kuroitigo/RestfulAPI/routes
+go get github.com/U-T-kuroitigo/RestfulAPI
 go get github.com/joho/godotenv
+go get "github.com/go-playground/validator/v10"
 go mod tidy
 
 
