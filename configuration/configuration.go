@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
-	_ "gorm.io/driver/mysql" //driver para mysql
+
+	// _ "gorm.io/driver/mysql" //driver para mysql
 	"gorm.io/gorm"
 )
 
@@ -48,14 +50,26 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{})
+	db.AutoMigrate(&user{},&theme{})
 
 	return db
 }
 
 type user struct {
 	gorm.Model
+	ID        uint           `gorm:"primaryKey"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Age       int    `json:"age"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type theme struct {
+	ThemeID string `json:"theme_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ThemeTitle string `json:"theme_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
 }
