@@ -13,7 +13,7 @@ func Create(context echo.Context) error {
 	if err := context.Bind(c); err != nil {
 		r := response.Model{
 			Code:    "400",
-			Message: "Estructura incorrecta",
+			Message: "Incorrect structure",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusBadRequest, r)
@@ -22,7 +22,7 @@ func Create(context echo.Context) error {
 	if err := ValidateChapter(c); err != nil {
 		return context.JSON(http.StatusBadRequest, response.Model{
 			Code:    "400",
-			Message: "Validación fallida",
+			Message: "Failed validation",
 			Data:    err.Error(),
 		})
 	}
@@ -33,7 +33,7 @@ func Create(context echo.Context) error {
 	if err := db.Create(&c).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al crear",
+			Message: "Error creatingr",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -41,7 +41,7 @@ func Create(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "201",
-		Message: "Creado Correctamente",
+		Message: "Created Successfully",
 		Data:    c,
 	}
 	return context.JSON(http.StatusCreated, r)
@@ -55,7 +55,7 @@ func GetAll(context echo.Context) error {
 	if err := db.Find(&chapters).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al consultar",
+			Message: "Query error",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -63,32 +63,32 @@ func GetAll(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "200",
-		Message: "Consultado Correctamente",
+		Message: "Correctly consulted",
 		Data:    chapters,
 	}
 	return context.JSON(http.StatusOK, r)
 }
 
 func Delete(context echo.Context) error {
-	var usuario Chapter
+	var chapter Chapter
 	id := context.QueryParam("id")
 
 	db := configuration.GetConnection()
 
 
-	if err := db.First(&usuario, id).Error; err != nil {
+	if err := db.First(&chapter, id).Error; err != nil {
 		r := response.Model{
 			Code:    "404",
-			Message: "Usuario no encontrado",
+			Message: "not found",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusNotFound, r)
 	}
 
-	if err := db.Delete(&usuario).Error; err != nil {
+	if err := db.Delete(&chapter).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al eliminar",
+			Message: "Delete errorr",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -96,8 +96,8 @@ func Delete(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "202",
-		Message: "Eliminado Correctamente",
-		Data:    usuario,
+		Message: "Correctly Deleted",
+		Data:    chapter,
 	}
 	return context.JSON(http.StatusAccepted, r)
 }
@@ -112,7 +112,7 @@ func Update(context echo.Context) error {
 	if err := db.Model(&Chapter{}).Where("chapter_id = ?", ci).Updates(Chapter{ChapterTitle: ct}).Error; err != nil {
 		return context.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
-			Message: "Error al actualizar",
+			Message: "Error updating",
 			Data:    err.Error(),
 		})
 	}
@@ -121,14 +121,14 @@ func Update(context echo.Context) error {
 	if err := db.Find(&chapters).Error; err != nil {
 		return context.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
-			Message: "Error al consultar",
+			Message: "Query error",
 			Data:    err.Error(),
 		})
 	}
 
 	r := response.Model{
 		Code:    "202",
-		Message: "Actualizado Correctamente",
+		Message: "Updated successfully",
 		Data:    chapters,
 	}
 	return context.JSON(http.StatusAccepted, r)
@@ -143,7 +143,7 @@ func Get(context echo.Context) error {
 	if err := db.First(&chapter, id).Error; err != nil {
 		r := response.Model{
 			Code:    "404",
-			Message: "Usuario no encontrado",
+			Message: "not found",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusNotFound, r)
@@ -151,7 +151,7 @@ func Get(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "200",
-		Message: "Consultado correctamente",
+		Message: "Correctly consulted",
 		Data:    chapter,
 	}
 	return context.JSON(http.StatusOK, r)

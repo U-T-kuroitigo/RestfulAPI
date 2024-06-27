@@ -9,11 +9,10 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 
-	// _ "gorm.io/driver/mysql" //driver para mysql
 	"gorm.io/gorm"
 )
 
-// Configuration crea un struct para el json
+// Configuration creates a struct for the json
 type Configuration struct {
 	Server   string
 	Port     string
@@ -23,7 +22,7 @@ type Configuration struct {
 }
 
 
-// GetConfiguration obtiene la configuración del json
+// GetConfiguration gets the configuration from the json
 func GetConfiguration() Configuration {
 	var c Configuration
 	err := godotenv.Load(".env")
@@ -41,7 +40,7 @@ func GetConfiguration() Configuration {
 	return c
 }
 
-// GetConnection obtiene una conexion a la bd
+// GetConnection obtains a connection to the database
 func GetConnection() *gorm.DB {
 	c := GetConfiguration()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", c.User, c.Password, c.Server, c.Port, c.Database)

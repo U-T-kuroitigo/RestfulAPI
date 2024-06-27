@@ -1,6 +1,6 @@
 package response
 
-// Model es una estructura de respuesta
+// Model is a response structure
 type Model struct {
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
