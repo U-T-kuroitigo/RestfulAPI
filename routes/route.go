@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/chapter"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/theme"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/user"
 	"github.com/labstack/echo"
@@ -22,8 +23,17 @@ func themeRoutes(e *echo.Echo) {
 	e.DELETE("api/v2/theme", theme.Delete) //DELETE
 }
 
+func chapterRoutes(e *echo.Echo) {
+	e.GET("api/v2/chapters", chapter.GetAll)   //GetAll chapters
+	e.GET("api/v2/chapter", chapter.Get)       //GET one chapter
+	e.POST("api/v2/chapter", chapter.Create)   //CREATE
+	e.PUT("api/v2/chapter", chapter.Update)    //UPDATE
+	e.DELETE("api/v2/chapter", chapter.Delete) //DELETE
+}
+
 // StartRoutes Inicializa las rutas
 func StartRoutes(e *echo.Echo) {
 	userRoutes(e)
 	themeRoutes(e)
+	chapterRoutes(e)
 }

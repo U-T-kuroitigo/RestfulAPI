@@ -50,13 +50,12 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{},&theme{})
+	db.AutoMigrate(&user{},&theme{},&chapter{})
 
 	return db
 }
 
 type user struct {
-	gorm.Model
 	ID        uint           `gorm:"primaryKey"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -69,6 +68,16 @@ type user struct {
 type theme struct {
 	ThemeID string `json:"theme_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	ThemeTitle string `json:"theme_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	Chapter []chapter `gorm:"foreignKey:ThemeID;references:ThemeID"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type chapter struct {
+	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ThemeID string `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ChapterTitle string `json:"chapter_title" gorm:"type:varchar(255);not null" validate:"max=12"`
 	CreatedAt time.Time
   UpdatedAt time.Time
   DeletedAt gorm.DeletedAt `gorm:"index"`
