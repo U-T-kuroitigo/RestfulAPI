@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/U-T-kuroitigo/RestfulAPI/theme"
-	"github.com/U-T-kuroitigo/RestfulAPI/user"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/theme"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/user"
 	"github.com/labstack/echo"
 )
 
