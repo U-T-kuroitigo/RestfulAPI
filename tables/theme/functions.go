@@ -8,13 +8,12 @@ import (
 	"github.com/labstack/echo"
 )
 
-// Create crea un nuevo usuario
 func Create(context echo.Context) error {
 	t := &Theme{}
 	if err := context.Bind(t); err != nil {
 		r := response.Model{
 			Code:    "400",
-			Message: "Estructura incorrecta",
+			Message: "Incorrect structure",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusBadRequest, r)
@@ -23,7 +22,7 @@ func Create(context echo.Context) error {
 	if err := ValidateTheme(t); err != nil {
 		return context.JSON(http.StatusBadRequest, response.Model{
 			Code:    "400",
-			Message: "Validación fallida",
+			Message: "Failed validation",
 			Data:    err.Error(),
 		})
 	}
@@ -34,7 +33,7 @@ func Create(context echo.Context) error {
 	if err := db.Create(&t).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al crear",
+			Message: "Error creating",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -42,13 +41,12 @@ func Create(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "201",
-		Message: "Creado Correctamente",
+		Message: "Created Successfully",
 		Data:    t,
 	}
 	return context.JSON(http.StatusCreated, r)
 }
 
-// GetAll Obtiene todos los datos
 func GetAll(context echo.Context) error {
 	themes := []Theme{}
 	db := configuration.GetConnection()
@@ -57,7 +55,7 @@ func GetAll(context echo.Context) error {
 	if err := db.Find(&themes).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al consultar",
+			Message: "Query error",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -65,33 +63,32 @@ func GetAll(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "200",
-		Message: "Consultado Correctamente",
+		Message: "Correctly consulted",
 		Data:    themes,
 	}
 	return context.JSON(http.StatusOK, r)
 }
 
-// Delete elimina un usuario por su id
 func Delete(context echo.Context) error {
-	var usuario Theme
+	var theme Theme
 	id := context.QueryParam("id")
 
 	db := configuration.GetConnection()
 
 
-	if err := db.First(&usuario, id).Error; err != nil {
+	if err := db.First(&theme, id).Error; err != nil {
 		r := response.Model{
 			Code:    "404",
-			Message: "Usuario no encontrado",
+			Message: "not found",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusNotFound, r)
 	}
 
-	if err := db.Delete(&usuario).Error; err != nil {
+	if err := db.Delete(&theme).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error al eliminar",
+			Message: "Delete error",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusInternalServerError, r)
@@ -99,13 +96,12 @@ func Delete(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "202",
-		Message: "Eliminado Correctamente",
-		Data:    usuario,
+		Message: "Correctly Deleted",
+		Data:    theme,
 	}
 	return context.JSON(http.StatusAccepted, r)
 }
 
-// Update actualiza los campos
 func Update(context echo.Context) error {
 	ti := context.QueryParam("theme_id")
 	tt := context.QueryParam("theme_title")
@@ -116,7 +112,7 @@ func Update(context echo.Context) error {
 	if err := db.Model(&Theme{}).Where("theme_id = ?", ti).Updates(Theme{ThemeTitle: tt}).Error; err != nil {
 		return context.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
-			Message: "Error al actualizar",
+			Message: "Error updating",
 			Data:    err.Error(),
 		})
 	}
@@ -125,20 +121,19 @@ func Update(context echo.Context) error {
 	if err := db.Find(&themes).Error; err != nil {
 		return context.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
-			Message: "Error al consultar",
+			Message: "Query error",
 			Data:    err.Error(),
 		})
 	}
 
 	r := response.Model{
 		Code:    "202",
-		Message: "Actualizado Correctamente",
+		Message: "Updated successfully",
 		Data:    themes,
 	}
 	return context.JSON(http.StatusAccepted, r)
 }
 
-// Get trae un solo usuario por su ID
 func Get(context echo.Context) error {
 	id := context.QueryParam("id")
 
@@ -148,7 +143,7 @@ func Get(context echo.Context) error {
 	if err := db.First(&theme, id).Error; err != nil {
 		r := response.Model{
 			Code:    "404",
-			Message: "Usuario no encontrado",
+			Message: "not found",
 			Data:    err.Error(),
 		}
 		return context.JSON(http.StatusNotFound, r)
@@ -156,7 +151,7 @@ func Get(context echo.Context) error {
 
 	r := response.Model{
 		Code:    "200",
-		Message: "Consultado correctamente",
+		Message: "Correctly consulted",
 		Data:    theme,
 	}
 	return context.JSON(http.StatusOK, r)

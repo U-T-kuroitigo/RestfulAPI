@@ -18,6 +18,6 @@ func main() {
 
 	err := e.Start(":5000")
 	if err != nil {
-		fmt.Printf("Error, no se pudo ejecutar el servidor: %v", err)
+		fmt.Printf("Error, could not run server: %v", err)
 	}
 }

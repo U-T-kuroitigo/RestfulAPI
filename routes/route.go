@@ -31,7 +31,6 @@ func chapterRoutes(e *echo.Echo) {
 	e.DELETE("api/v2/chapter", chapter.Delete) //DELETE
 }
 
-// StartRoutes Inicializa las rutas
 func StartRoutes(e *echo.Echo) {
 	userRoutes(e)
 	themeRoutes(e)
