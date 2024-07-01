@@ -49,7 +49,7 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{},&theme{},&chapter{})
+	db.AutoMigrate(&user{},&theme{},&chapter{},&situation{})
 
 	return db
 }
@@ -77,6 +77,17 @@ type chapter struct {
 	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	ThemeID string `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
 	ChapterTitle string `json:"chapter_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	Situation []situation `gorm:"foreignKey:ChapterID;references:ChapterID"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type situation struct {
+	SituationID string `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	SituationTitle string `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	SituationLevel uint `json:"situation_level"`
 	CreatedAt time.Time
   UpdatedAt time.Time
   DeletedAt gorm.DeletedAt `gorm:"index"`
