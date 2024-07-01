@@ -3,6 +3,7 @@ package situation
 import (
 	"time"
 
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/problem"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -12,6 +13,7 @@ type Situation struct {
 	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
 	SituationTitle string `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
 	SituationLevel uint `json:"situation_level"`
+	Problem []problem.Problem `gorm:"foreignKey:SituationID;references:SituationID"`
 	CreatedAt time.Time
   UpdatedAt time.Time
   DeletedAt gorm.DeletedAt `gorm:"index"`
