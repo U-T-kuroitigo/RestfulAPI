@@ -21,13 +21,12 @@ type Configuration struct {
 	Database string
 }
 
-
 // GetConfiguration gets the configuration from the json
 func GetConfiguration() Configuration {
 	var c Configuration
 	err := godotenv.Load(".env")
 	if err != nil {
-			log.Fatalf("Error loading .env file")
+		log.Fatalf("Error loading .env file")
 	}
 
 	// 環境変数を取得
@@ -49,46 +48,56 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{},&theme{},&chapter{},&situation{})
+	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &extra_situation{})
 
 	return db
 }
 
 type user struct {
-	ID        uint           `gorm:"primaryKey"`
+	ID        uint   `gorm:"primaryKey"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Age       int    `json:"age"`
 	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type theme struct {
-	ThemeID string `json:"theme_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ThemeTitle string `json:"theme_title" gorm:"type:varchar(255);not null" validate:"max=12"`
-	Chapter []chapter `gorm:"foreignKey:ThemeID;references:ThemeID"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	ThemeID    string    `json:"theme_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ThemeTitle string    `json:"theme_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	Chapter    []chapter `gorm:"foreignKey:ThemeID;references:ThemeID"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 type chapter struct {
-	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ThemeID string `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ChapterTitle string `json:"chapter_title" gorm:"type:varchar(255);not null" validate:"max=12"`
-	Situation []situation `gorm:"foreignKey:ChapterID;references:ChapterID"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	ChapterID      string            `json:"chapter_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ThemeID        string            `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ChapterTitle   string            `json:"chapter_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	Situation      []situation       `gorm:"foreignKey:ChapterID;references:ChapterID"`
+	ExtraSituation []extra_situation `gorm:"foreignKey:ChapterID;references:ChapterID"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
 }
 
 type situation struct {
-	SituationID string `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ChapterID string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	SituationID    string `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID      string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
 	SituationTitle string `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
-	SituationLevel uint `json:"situation_level"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	SituationLevel uint   `json:"situation_level"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
+}
+
+type extra_situation struct {
+	ExtraSituationID    string `json:"extra_situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID           string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraSituationTitle string `json:"extra_situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	DeletedAt           gorm.DeletedAt `gorm:"index"`
 }
