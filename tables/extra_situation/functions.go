@@ -9,8 +9,8 @@ import (
 )
 
 func Create(c echo.Context) error {
-	s := &ExtraSituation{}
-	if err := c.Bind(s); err != nil {
+	es := &ExtraSituation{}
+	if err := c.Bind(es); err != nil {
 		r := response.Model{
 			Code:    "400",
 			Message: "Incorrect structure",
@@ -19,7 +19,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, r)
 	}
 
-	if err := ValidateExtraSituation(s); err != nil {
+	if err := ValidateExtraSituation(es); err != nil {
 		return c.JSON(http.StatusBadRequest, response.Model{
 			Code:    "400",
 			Message: "Failed validation",
@@ -29,7 +29,7 @@ func Create(c echo.Context) error {
 
 	db := configuration.GetConnection()
 
-	if err := db.Create(&s).Error; err != nil {
+	if err := db.Create(&es).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
 			Message: "Error creatingr",
@@ -41,7 +41,7 @@ func Create(c echo.Context) error {
 	r := response.Model{
 		Code:    "201",
 		Message: "Created Successfully",
-		Data:    s,
+		Data:    es,
 	}
 	return c.JSON(http.StatusCreated, r)
 }
@@ -100,12 +100,12 @@ func Delete(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	si := c.QueryParam("extra_situation_id")
-	st := c.QueryParam("extra_situation_title")
+	esi := c.QueryParam("extra_situation_id")
+	est := c.QueryParam("extra_situation_title")
 
 	db := configuration.GetConnection()
 
-	if err := db.Model(&ExtraSituation{}).Where("extra_situation_id = ?", si).Updates(ExtraSituation{ExtraSituationTitle: st}).Error; err != nil {
+	if err := db.Model(&ExtraSituation{}).Where("extra_situation_id = ?", esi).Updates(ExtraSituation{ExtraSituationTitle: est}).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
 			Message: "Error updating",
