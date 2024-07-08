@@ -48,7 +48,7 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &extra_situation{})
+	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &extra_situation{})
 
 	return db
 }
@@ -87,10 +87,22 @@ type situation struct {
 	SituationID    string `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	ChapterID      string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
 	SituationTitle string `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
-	SituationLevel uint   `json:"situation_level"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `gorm:"index"`
+	SituationLevel uint `json:"situation_level"`
+	Problem []problem `gorm:"foreignKey:SituationID;references:SituationID"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type problem struct {
+	ProblemID string `json:"problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	SituationID string `json:"situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ProblemTitle string `json:"problem_title" gorm:"not null"`
+	ProblemText string `json:"problem_text" gorm:"not null"`
+	ProblemExplanation string `json:"problem_explanation" gorm:"not null"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type extra_situation struct {

@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/chapter"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_situation"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/problem"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/situation"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/theme"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/user"
@@ -34,11 +35,19 @@ func chapterRoutes(e *echo.Echo) {
 }
 
 func situationRoutes(e *echo.Echo) {
-	e.GET("api/v2/situations", situation.GetAll)   //GetAll chapters
+	e.GET("api/v2/situations", situation.GetAll)   //GetAll situations
 	e.GET("api/v2/situation", situation.Get)       //GET one situation
 	e.POST("api/v2/situation", situation.Create)   //CREATE
 	e.PUT("api/v2/situation", situation.Update)    //UPDATE
 	e.DELETE("api/v2/situation", situation.Delete) //DELETE
+}
+
+func problemRoutes(e *echo.Echo) {
+	e.GET("api/v2/problems", problem.GetAll)   //GetAll problems
+	e.GET("api/v2/problem", problem.Get)       //GET one problem
+	e.POST("api/v2/problem", problem.Create)   //CREATE
+	e.PUT("api/v2/problem", problem.Update)    //UPDATE
+	e.DELETE("api/v2/problem", problem.Delete) //DELETE
 }
 
 func extra_situationRoutes(e *echo.Echo) {
@@ -54,5 +63,6 @@ func StartRoutes(e *echo.Echo) {
 	themeRoutes(e)
 	chapterRoutes(e)
 	situationRoutes(e)
+  problemRoutes(e)
 	extra_situationRoutes(e)
 }
