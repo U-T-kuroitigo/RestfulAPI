@@ -29,7 +29,6 @@ func Create(context echo.Context) error {
 
 	db := configuration.GetConnection()
 
-
 	if err := db.Create(&c).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
@@ -50,7 +49,6 @@ func Create(context echo.Context) error {
 func GetAll(context echo.Context) error {
 	chapters := []Chapter{}
 	db := configuration.GetConnection()
-
 
 	if err := db.Find(&chapters).Error; err != nil {
 		r := response.Model{
@@ -74,7 +72,6 @@ func Delete(context echo.Context) error {
 	id := context.QueryParam("id")
 
 	db := configuration.GetConnection()
-
 
 	if err := db.First(&chapter, id).Error; err != nil {
 		r := response.Model{
@@ -107,7 +104,6 @@ func Update(context echo.Context) error {
 	ct := context.QueryParam("chapter_title")
 
 	db := configuration.GetConnection()
-
 
 	if err := db.Model(&Chapter{}).Where("chapter_id = ?", ci).Updates(Chapter{ChapterTitle: ct}).Error; err != nil {
 		return context.JSON(http.StatusInternalServerError, response.Model{

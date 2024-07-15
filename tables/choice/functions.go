@@ -30,7 +30,6 @@ func Create(c echo.Context) error {
 
 	db := configuration.GetConnection()
 
-
 	if err := db.Create(&ch).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
@@ -51,7 +50,6 @@ func Create(c echo.Context) error {
 func GetAll(c echo.Context) error {
 	choices := []Choice{}
 	db := configuration.GetConnection()
-
 
 	if err := db.Find(&choices).Error; err != nil {
 		r := response.Model{
@@ -76,9 +74,8 @@ func Delete(c echo.Context) error {
 
 	db := configuration.GetConnection()
 
-
 	if err := db.Where("choice_id = ?", ci).First(&choice).Error; err != nil {
-		if err == gorm.ErrRecordNotFound{
+		if err == gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "404",
 				Message: "not found",
@@ -118,7 +115,7 @@ func Update(c echo.Context) error {
 	choice := Choice{}
 
 	if err := db.Where("choice_id = ?", ci).First(&choice).Error; err != nil {
-		if err == gorm.ErrRecordNotFound{
+		if err == gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "404",
 				Message: "not found",
@@ -179,7 +176,7 @@ func Get(c echo.Context) error {
 
 	var choice Choice
 	if err := db.Where("choice_id = ?", ci).First(&choice).Error; err != nil {
-		if err == gorm.ErrRecordNotFound{
+		if err == gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "404",
 				Message: "not found",
