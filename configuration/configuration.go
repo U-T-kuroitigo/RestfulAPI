@@ -48,18 +48,19 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{})
+	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{})
 
 	return db
 }
 
 type user struct {
-	UserID string `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	MailAddress string `json:"mail_address" gorm:"index:,unique;type:varchar(255);not null"`
-	GmailID string `json:"gmail_id" gorm:"index:,unique;type:varchar(255);not null"`
+	ID        uint   `gorm:"primaryKey"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Age       int    `json:"age"`
 	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type theme struct {
@@ -83,44 +84,55 @@ type chapter struct {
 }
 
 type situation struct {
-	SituationID    string `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ChapterID      string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	SituationTitle string `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
-	SituationLevel uint `json:"situation_level"`
-	Problem []problem `gorm:"foreignKey:SituationID;references:SituationID"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	SituationID    string    `json:"situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID      string    `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	SituationTitle string    `json:"situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	SituationLevel uint      `json:"situation_level"`
+	Problem        []problem `gorm:"foreignKey:SituationID;references:SituationID"`
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
 }
 
 type problem struct {
-	ProblemID string `json:"problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	SituationID string `json:"situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ProblemTitle string `json:"problem_title" gorm:"not null"`
-	ProblemText string `json:"problem_text" gorm:"not null"`
+	ProblemID          string `json:"problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	SituationID        string `json:"situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ProblemTitle       string `json:"problem_title" gorm:"not null"`
+	ProblemText        string `json:"problem_text" gorm:"not null"`
 	ProblemExplanation string `json:"problem_explanation" gorm:"not null"`
-	Choice []choice `gorm:"foreignKey:ProblemID;references:ProblemID"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
+	DeletedAt          gorm.DeletedAt `gorm:"index"`
 }
 
 type choice struct {
-	ChoiceID string `json:"choice_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ProblemID string `json:"problem_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ChoiceText string `json:"choice_text" gorm:"not null"`
+	ChoiceID          string `json:"choice_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ProblemID         string `json:"problem_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ChoiceText        string `json:"choice_text" gorm:"not null"`
 	ChoiceExplanation string `json:"choice_explanation" gorm:"not null"`
-	CorrectFlag bool   `json:"correct_flag" gorm:"not null"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	CorrectFlag       bool   `json:"correct_flag" gorm:"not null"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	DeletedAt         gorm.DeletedAt `gorm:"index"`
 }
 
 type extra_situation struct {
-	ExtraSituationID    string `json:"extra_situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ChapterID           string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ExtraSituationTitle string `json:"extra_situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ExtraSituationID    string          `json:"extra_situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID           string          `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraSituationTitle string          `json:"extra_situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ExtraProblem        []extra_problem `gorm:"foreignKey:ExtraSituationID;references:ExtraSituationID"`
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	DeletedAt           gorm.DeletedAt `gorm:"index"`
+}
+
+type extra_problem struct {
+	ExtraProblemID          string `json:"extra_problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ExtraSituationID        string `json:"extra_situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraProblemTitle       string `json:"extra_problem_title" gorm:"not null"`
+	ExtraProblemText        string `json:"extra_problem_text" gorm:"not null"`
+	ExtraProblemExplanation string `json:"extra_problem_explanation" gorm:"not null"`
+	CreatedAt               time.Time
+	UpdatedAt               time.Time
+	DeletedAt               gorm.DeletedAt `gorm:"index"`
 }

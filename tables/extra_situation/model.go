@@ -3,14 +3,16 @@ package extra_situation
 import (
 	"time"
 
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_problem"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 type ExtraSituation struct {
-	ExtraSituationID    string `json:"extra_situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ChapterID           string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ExtraSituationTitle string `json:"extra_situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ExtraSituationID    string                       `json:"extra_situation_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ChapterID           string                       `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraSituationTitle string                       `json:"extra_situation_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ExtraProblem        []extra_problem.ExtraProblem `gorm:"foreignKey:ExtraSituationID;references:ExtraSituationID"`
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
 	DeletedAt           gorm.DeletedAt `gorm:"index"`
