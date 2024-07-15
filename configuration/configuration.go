@@ -54,13 +54,12 @@ func GetConnection() *gorm.DB {
 }
 
 type user struct {
-	ID        uint   `gorm:"primaryKey"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Age       int    `json:"age"`
+	UserID string `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	MailAddress string `json:"mail_address" gorm:"index:,unique;type:varchar(255);not null"`
+	GmailID string `json:"gmail_id" gorm:"index:,unique;type:varchar(255);not null"`
 	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type theme struct {
