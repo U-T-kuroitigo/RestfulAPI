@@ -30,7 +30,6 @@ func Create(c echo.Context) error {
 
 	db := configuration.GetConnection()
 
-
 	if err := db.Create(&s).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
@@ -51,7 +50,6 @@ func Create(c echo.Context) error {
 func GetAll(c echo.Context) error {
 	situations := []Situation{}
 	db := configuration.GetConnection()
-
 
 	if err := db.Find(&situations).Error; err != nil {
 		r := response.Model{
@@ -75,7 +73,6 @@ func Delete(c echo.Context) error {
 	id := c.QueryParam("id")
 
 	db := configuration.GetConnection()
-
 
 	if err := db.First(&situation, id).Error; err != nil {
 		r := response.Model{
@@ -117,7 +114,7 @@ func Update(c echo.Context) error {
 
 	db := configuration.GetConnection()
 
-	if err := db.Model(&Situation{}).Where("situation_id = ?", si).Updates(Situation{SituationTitle: st, SituationLevel:  uint(sl)}).Error; err != nil {
+	if err := db.Model(&Situation{}).Where("situation_id = ?", si).Updates(Situation{SituationTitle: st, SituationLevel: uint(sl)}).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
 			Message: "Error updating",

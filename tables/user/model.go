@@ -8,12 +8,12 @@ import (
 )
 
 type User struct {
-	UserID string `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	UserID      string `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	MailAddress string `json:"mail_address" gorm:"index:,unique,type:varchar(255);not null"`
-	GmailID string `json:"gmail_id" gorm:"unique,type:varchar(255);not null"`
-	CreatedAt time.Time
-  UpdatedAt time.Time
-  DeletedAt gorm.DeletedAt `gorm:"index"`
+	GmailID     string `json:"gmail_id" gorm:"unique,type:varchar(255);not null"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 var validate *validator.Validate

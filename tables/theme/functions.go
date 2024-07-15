@@ -30,7 +30,6 @@ func Create(context echo.Context) error {
 
 	db := configuration.GetConnection()
 
-
 	if err := db.Create(&t).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
@@ -51,7 +50,6 @@ func Create(context echo.Context) error {
 func GetAll(context echo.Context) error {
 	themes := []Theme{}
 	db := configuration.GetConnection()
-
 
 	if err := db.Find(&themes).Error; err != nil {
 		r := response.Model{
@@ -75,7 +73,6 @@ func Delete(context echo.Context) error {
 	ti := context.QueryParam("theme_id")
 
 	db := configuration.GetConnection()
-
 
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
 		r := response.Model{
@@ -112,8 +109,8 @@ func Update(context echo.Context) error {
 	theme := Theme{}
 
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
-		if err == gorm.ErrRecordNotFound{
-			print("\n\nerr is ",err , "\n")
+		if err == gorm.ErrRecordNotFound {
+			print("\n\nerr is ", err, "\n")
 			// print("\n\nerr code is ",err. , "\n")
 			return context.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "404",
@@ -158,7 +155,7 @@ func Get(context echo.Context) error {
 	db := configuration.GetConnection()
 
 	var theme Theme
-	if err := db.Where("theme_id = ?", ti).First(&theme).Error;err != nil {
+	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
 		r := response.Model{
 			Code:    "404",
 			Message: "not found",
