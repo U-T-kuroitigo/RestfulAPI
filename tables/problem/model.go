@@ -3,6 +3,7 @@ package problem
 import (
 	"time"
 
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/choice"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ type Problem struct {
 	ProblemTitle string `json:"problem_title" gorm:"not null"`
 	ProblemText string `json:"problem_text" gorm:"not null"`
 	ProblemExplanation string `json:"problem_explanation" gorm:"not null"`
+	Choice []choice.Choice `gorm:"foreignKey:ProblemID;references:ProblemID"`
 	CreatedAt time.Time
   UpdatedAt time.Time
   DeletedAt gorm.DeletedAt `gorm:"index"`
