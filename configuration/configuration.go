@@ -48,7 +48,7 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &extra_situation{})
+	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{})
 
 	return db
 }
@@ -100,6 +100,18 @@ type problem struct {
 	ProblemTitle string `json:"problem_title" gorm:"not null"`
 	ProblemText string `json:"problem_text" gorm:"not null"`
 	ProblemExplanation string `json:"problem_explanation" gorm:"not null"`
+	Choice []choice `gorm:"foreignKey:ProblemID;references:ProblemID"`
+	CreatedAt time.Time
+  UpdatedAt time.Time
+  DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
+type choice struct {
+	ChoiceID string `json:"choice_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ProblemID string `json:"problem_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ChoiceText string `json:"choice_text" gorm:"not null"`
+	ChoiceExplanation string `json:"choice_explanation" gorm:"not null"`
+	CorrectFlag bool   `json:"correct_flag" gorm:"not null"`
 	CreatedAt time.Time
   UpdatedAt time.Time
   DeletedAt gorm.DeletedAt `gorm:"index"`
