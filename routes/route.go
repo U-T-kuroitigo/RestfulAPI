@@ -9,6 +9,7 @@ import (
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/situation"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/theme"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/user"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/user_profile"
 	"github.com/labstack/echo"
 )
 
@@ -18,6 +19,14 @@ func userRoutes(e *echo.Echo) {
 	e.POST("api/v2/user", user.Create)   //CREATE
 	e.PUT("api/v2/user", user.Update)    //UPDATE
 	e.DELETE("api/v2/user", user.Delete) //DELETE
+}
+
+func UserProfileRoutes(e *echo.Echo) {
+	e.GET("api/v2/user_profiles", user_profile.GetAll)   //GetAll UserProfiles
+	e.GET("api/v2/user_profile", user_profile.Get)       //GET one UserProfile
+	e.POST("api/v2/user_profile", user_profile.Create)   //CREATE
+	e.PUT("api/v2/user_profile", user_profile.Update)    //UPDATE
+	e.DELETE("api/v2/user_profile", user_profile.Delete) //DELETE
 }
 
 func themeRoutes(e *echo.Echo) {
@@ -78,6 +87,7 @@ func extra_problemRoutes(e *echo.Echo) {
 
 func StartRoutes(e *echo.Echo) {
 	userRoutes(e)
+	UserProfileRoutes(e)
 	themeRoutes(e)
 	chapterRoutes(e)
 	situationRoutes(e)
