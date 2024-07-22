@@ -48,16 +48,25 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{})
+	db.AutoMigrate(&user{}, &user_profile{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{})
 
 	return db
 }
 
 type user struct {
-	ID        uint   `gorm:"primaryKey"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Age       int    `json:"age"`
+	UserID      string         `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	MailAddress string         `json:"mail_address" gorm:"index:,unique,type:varchar(255);not null"`
+	GmailID     string         `json:"gmail_id" gorm:"unique,type:varchar(255);not null;size:255"`
+	UserProfile []user_profile `gorm:"foreignKey:UserID;references:UserID"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+}
+
+type user_profile struct {
+	UserID    string `json:"user_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	UserName  string `json:"user_name" gorm:"not null"`
+	UserImg   string `json:"user_img" gorm:"not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
