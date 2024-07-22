@@ -75,6 +75,7 @@ type user_profile struct {
 type theme struct {
 	ThemeID    string    `json:"theme_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	ThemeTitle string    `json:"theme_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ThemeImg   string    `json:"theme_img" gorm:"not null"`
 	Chapter    []chapter `gorm:"foreignKey:ThemeID;references:ThemeID"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
@@ -85,6 +86,7 @@ type chapter struct {
 	ChapterID      string            `json:"chapter_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
 	ThemeID        string            `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
 	ChapterTitle   string            `json:"chapter_title" gorm:"type:varchar(255);not null" validate:"max=12"`
+	ChapterImg     string            `json:"chapter_img" gorm:"not null"`
 	Situation      []situation       `gorm:"foreignKey:ChapterID;references:ChapterID"`
 	ExtraSituation []extra_situation `gorm:"foreignKey:ChapterID;references:ChapterID"`
 	CreatedAt      time.Time

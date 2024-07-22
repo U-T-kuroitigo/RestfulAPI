@@ -9,19 +9,19 @@ import (
 	"gorm.io/gorm"
 )
 
-func Create(context echo.Context) error {
-	t := &Theme{}
-	if err := context.Bind(t); err != nil {
+func Create(c echo.Context) error {
+	theme := &Theme{}
+	if err := c.Bind(theme); err != nil {
 		r := response.Model{
 			Code:    "400",
 			Message: "Incorrect structure",
 			Data:    err.Error(),
 		}
-		return context.JSON(http.StatusBadRequest, r)
+		return c.JSON(http.StatusBadRequest, r)
 	}
 
-	if err := ValidateTheme(t); err != nil {
-		return context.JSON(http.StatusBadRequest, response.Model{
+	if err := ValidateTheme(theme); err != nil {
+		return c.JSON(http.StatusBadRequest, response.Model{
 			Code:    "400",
 			Message: "Failed validation",
 			Data:    err.Error(),
@@ -30,24 +30,24 @@ func Create(context echo.Context) error {
 
 	db := configuration.GetConnection()
 
-	if err := db.Create(&t).Error; err != nil {
+	if err := db.Create(&theme).Error; err != nil {
 		r := response.Model{
 			Code:    "500",
-			Message: "Error creating",
+			Message: "Error creatingr",
 			Data:    err.Error(),
 		}
-		return context.JSON(http.StatusInternalServerError, r)
+		return c.JSON(http.StatusInternalServerError, r)
 	}
 
 	r := response.Model{
 		Code:    "201",
 		Message: "Created Successfully",
-		Data:    t,
+		Data:    theme,
 	}
-	return context.JSON(http.StatusCreated, r)
+	return c.JSON(http.StatusCreated, r)
 }
 
-func GetAll(context echo.Context) error {
+func GetAll(c echo.Context) error {
 	themes := []Theme{}
 	db := configuration.GetConnection()
 
@@ -57,7 +57,7 @@ func GetAll(context echo.Context) error {
 			Message: "Query error",
 			Data:    err.Error(),
 		}
-		return context.JSON(http.StatusInternalServerError, r)
+		return c.JSON(http.StatusInternalServerError, r)
 	}
 
 	r := response.Model{
@@ -65,22 +65,29 @@ func GetAll(context echo.Context) error {
 		Message: "Correctly consulted",
 		Data:    themes,
 	}
-	return context.JSON(http.StatusOK, r)
+	return c.JSON(http.StatusOK, r)
 }
 
-func Delete(context echo.Context) error {
+func Delete(c echo.Context) error {
 	var theme Theme
-	ti := context.QueryParam("theme_id")
+	ti := c.QueryParam("theme_id")
 
 	db := configuration.GetConnection()
 
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
-		r := response.Model{
-			Code:    "404",
-			Message: "not found",
-			Data:    err.Error(),
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusInternalServerError, response.Model{
+				Code:    "404",
+				Message: "not found",
+				Data:    err.Error(),
+			})
+		} else {
+			return c.JSON(http.StatusInternalServerError, response.Model{
+				Code:    "500",
+				Message: "Query error",
+				Data:    err.Error(),
+			})
 		}
-		return context.JSON(http.StatusNotFound, r)
 	}
 
 	if err := db.Where("theme_id = ?", ti).Delete(&theme).Error; err != nil {
@@ -89,7 +96,7 @@ func Delete(context echo.Context) error {
 			Message: "Delete error",
 			Data:    err.Error(),
 		}
-		return context.JSON(http.StatusInternalServerError, r)
+		return c.JSON(http.StatusInternalServerError, r)
 	}
 
 	r := response.Model{
@@ -97,12 +104,11 @@ func Delete(context echo.Context) error {
 		Message: "Correctly Deleted",
 		Data:    theme,
 	}
-	return context.JSON(http.StatusAccepted, r)
+	return c.JSON(http.StatusAccepted, r)
 }
 
-func Update(context echo.Context) error {
-	ti := context.QueryParam("theme_id")
-	tt := context.QueryParam("theme_title")
+func Update(c echo.Context) error {
+	ti := c.QueryParam("theme_id")
 
 	db := configuration.GetConnection()
 
@@ -110,15 +116,13 @@ func Update(context echo.Context) error {
 
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			print("\n\nerr is ", err, "\n")
-			// print("\n\nerr code is ",err. , "\n")
-			return context.JSON(http.StatusInternalServerError, response.Model{
+			return c.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "404",
 				Message: "not found",
 				Data:    err.Error(),
 			})
 		} else {
-			return context.JSON(http.StatusInternalServerError, response.Model{
+			return c.JSON(http.StatusInternalServerError, response.Model{
 				Code:    "500",
 				Message: "Query error",
 				Data:    err.Error(),
@@ -126,8 +130,24 @@ func Update(context echo.Context) error {
 		}
 	}
 
-	if err := db.Model(&Theme{}).Where("theme_id = ?", ti).Updates(Theme{ThemeTitle: tt}).Error; err != nil {
-		return context.JSON(http.StatusInternalServerError, response.Model{
+	// リクエストボディをマップに変換
+	var requestBody map[string]interface{}
+	if err := c.Bind(&requestBody); err != nil {
+		return c.JSON(http.StatusBadRequest, response.Model{
+			Code:    "400",
+			Message: "Invalid request body",
+			Data:    err.Error(),
+		})
+	}
+
+	// 更新対象のフィールドを明示的に指定
+	updates := make(map[string]interface{})
+	for key, value := range requestBody {
+		updates[key] = value
+	}
+
+	if err := db.Model(&Theme{}).Where("theme_id = ?", ti).Updates(updates).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
 			Message: "Error updating",
 			Data:    err.Error(),
@@ -135,7 +155,7 @@ func Update(context echo.Context) error {
 	}
 
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
-		return context.JSON(http.StatusInternalServerError, response.Model{
+		return c.JSON(http.StatusInternalServerError, response.Model{
 			Code:    "500",
 			Message: "Query error",
 			Data:    err.Error(),
@@ -147,21 +167,28 @@ func Update(context echo.Context) error {
 		Message: "Updated successfully",
 		Data:    theme,
 	}
-	return context.JSON(http.StatusAccepted, r)
+	return c.JSON(http.StatusAccepted, r)
 }
 
-func Get(context echo.Context) error {
-	ti := context.QueryParam("theme_id")
+func Get(c echo.Context) error {
+	ti := c.QueryParam("theme_id")
 	db := configuration.GetConnection()
 
 	var theme Theme
 	if err := db.Where("theme_id = ?", ti).First(&theme).Error; err != nil {
-		r := response.Model{
-			Code:    "404",
-			Message: "not found",
-			Data:    err.Error(),
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusInternalServerError, response.Model{
+				Code:    "404",
+				Message: "not found",
+				Data:    err.Error(),
+			})
+		} else {
+			return c.JSON(http.StatusInternalServerError, response.Model{
+				Code:    "500",
+				Message: "Query error",
+				Data:    err.Error(),
+			})
 		}
-		return context.JSON(http.StatusNotFound, r)
 	}
 
 	r := response.Model{
@@ -169,5 +196,5 @@ func Get(context echo.Context) error {
 		Message: "Correctly consulted",
 		Data:    theme,
 	}
-	return context.JSON(http.StatusOK, r)
+	return c.JSON(http.StatusOK, r)
 }
