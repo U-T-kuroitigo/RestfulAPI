@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/chapter"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/choice"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_choice"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_problem"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_situation"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/problem"
@@ -85,6 +86,14 @@ func extra_problemRoutes(e *echo.Echo) {
 	e.DELETE("api/v2/extra_problem", extra_problem.Delete) //DELETE
 }
 
+func extra_choiceRoutes(e *echo.Echo) {
+	e.GET("api/v2/extra_choices", extra_choice.GetAll)   //GetAll choices
+	e.GET("api/v2/extra_choice", extra_choice.Get)       //GET one choice
+	e.POST("api/v2/extra_choice", extra_choice.Create)   //CREATE
+	e.PUT("api/v2/extra_choice", extra_choice.Update)    //UPDATE
+	e.DELETE("api/v2/extra_choice", extra_choice.Delete) //DELETE
+}
+
 func StartRoutes(e *echo.Echo) {
 	userRoutes(e)
 	UserProfileRoutes(e)
@@ -95,4 +104,5 @@ func StartRoutes(e *echo.Echo) {
 	choiceRoutes(e)
 	extra_problemRoutes(e)
 	extra_situationRoutes(e)
+	extra_choiceRoutes(e)
 }

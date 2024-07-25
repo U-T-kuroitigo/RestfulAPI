@@ -48,7 +48,7 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &user_profile{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{})
+	db.AutoMigrate(&user{}, &user_profile{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{}, &extra_choice{})
 
 	return db
 }
@@ -138,12 +138,24 @@ type extra_situation struct {
 }
 
 type extra_problem struct {
-	ExtraProblemID          string `json:"extra_problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
-	ExtraSituationID        string `json:"extra_situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
-	ExtraProblemTitle       string `json:"extra_problem_title" gorm:"not null"`
-	ExtraProblemText        string `json:"extra_problem_text" gorm:"not null"`
-	ExtraProblemExplanation string `json:"extra_problem_explanation" gorm:"not null"`
+	ExtraProblemID          string         `json:"extra_problem_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ExtraSituationID        string         `json:"extra_situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraProblemTitle       string         `json:"extra_problem_title" gorm:"not null"`
+	ExtraProblemText        string         `json:"extra_problem_text" gorm:"not null"`
+	ExtraProblemExplanation string         `json:"extra_problem_explanation" gorm:"not null"`
+	ExtraChoice             []extra_choice `gorm:"foreignKey:ExtraProblemID;references:ExtraProblemID"`
 	CreatedAt               time.Time
 	UpdatedAt               time.Time
 	DeletedAt               gorm.DeletedAt `gorm:"index"`
+}
+
+type extra_choice struct {
+	ExtraChoiceID          string `json:"extra_choice_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	ExtraProblemID         string `json:"extra_problem_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ExtraChoiceText        string `json:"extra_choice_text" gorm:"not null"`
+	ExtraChoiceExplanation string `json:"extra_choice_explanation" gorm:"not null"`
+	CorrectFlag            bool   `json:"correct_flag" gorm:"not null"`
+	CreatedAt              time.Time
+	UpdatedAt              time.Time
+	DeletedAt              gorm.DeletedAt `gorm:"index"`
 }
