@@ -96,8 +96,8 @@ func extra_choiceRoutes(e *echo.Echo) {
 }
 
 func HistoryRoutes(e *echo.Echo) {
-	e.GET("api/v2/historys", history.GetAll)   //GetAll choices
-	e.GET("api/v2/history", history.Get)       //GET one choice
+	e.GET("api/v2/historys", history.GetAll)   //GetAll historys
+	e.GET("api/v2/history", history.Get)       //GET one history
 	e.POST("api/v2/history", history.Create)   //CREATE
 	e.PUT("api/v2/history", history.Update)    //UPDATE
 	e.DELETE("api/v2/history", history.Delete) //DELETE
