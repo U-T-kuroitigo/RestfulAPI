@@ -48,7 +48,7 @@ func GetConnection() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&user{}, &user_profile{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{}, &extra_choice{})
+	db.AutoMigrate(&user{}, &user_profile{}, &theme{}, &chapter{}, &situation{}, &problem{}, &choice{}, &extra_situation{}, &extra_problem{}, &extra_choice{}, &history{})
 
 	return db
 }
@@ -58,6 +58,7 @@ type user struct {
 	MailAddress string         `json:"mail_address" gorm:"index:,unique,type:varchar(255);not null"`
 	GmailID     string         `json:"gmail_id" gorm:"unique,type:varchar(255);not null;size:255"`
 	UserProfile []user_profile `gorm:"foreignKey:UserID;references:UserID"`
+	History     []history      `gorm:"foreignKey:UserID;references:UserID"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
@@ -158,4 +159,16 @@ type extra_choice struct {
 	CreatedAt              time.Time
 	UpdatedAt              time.Time
 	DeletedAt              gorm.DeletedAt `gorm:"index"`
+}
+
+type history struct {
+	HistoryID   string `json:"history_id" gorm:"type:varchar(255);primaryKey;not null" validate:"max=32"`
+	UserID      string `json:"user_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ThemeID     string `json:"theme_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	ChapterID   string `json:"chapter_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	SituationID string `json:"situation_id" gorm:"type:varchar(255);not null" validate:"max=32"`
+	CorrectFlag bool   `json:"correct_flag" gorm:"not null"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
