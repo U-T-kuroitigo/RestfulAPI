@@ -4,6 +4,7 @@ import (
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/chapter"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/choice"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_choice"
+	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_history"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_problem"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/extra_situation"
 	"github.com/U-T-kuroitigo/RestfulAPI/tables/history"
@@ -103,6 +104,14 @@ func HistoryRoutes(e *echo.Echo) {
 	e.DELETE("api/v2/history", history.Delete) //DELETE
 }
 
+func ExtraHistoryRoutes(e *echo.Echo) {
+	e.GET("api/v2/extra_historys", extra_history.GetAll)   //GetAll historys
+	e.GET("api/v2/extra_history", extra_history.Get)       //GET one history
+	e.POST("api/v2/extra_history", extra_history.Create)   //CREATE
+	e.PUT("api/v2/extra_history", extra_history.Update)    //UPDATE
+	e.DELETE("api/v2/extra_history", extra_history.Delete) //DELETE
+}
+
 func StartRoutes(e *echo.Echo) {
 	userRoutes(e)
 	UserProfileRoutes(e)
@@ -115,4 +124,5 @@ func StartRoutes(e *echo.Echo) {
 	extra_situationRoutes(e)
 	extra_choiceRoutes(e)
 	HistoryRoutes(e)
+	ExtraHistoryRoutes(e)
 }
